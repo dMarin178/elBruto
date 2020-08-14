@@ -11,7 +11,7 @@ def conexionEjemplo():
  
         # Conexion al servidor de PostgreSQL
         print('Conectando a la base de datos PostgreSQL...')
-        conexion = psycopg2.connect(database="Gutierrez_Marin",user="postgres",password="postgres",host="localhost")
+        conexion = psycopg2.connect(database="taller2",user="postgres",password="postgres",host="localhost")
  
         # creación del cursor
         cur = conexion.cursor()

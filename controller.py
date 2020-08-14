@@ -109,9 +109,6 @@ def getOponente(nick):
     else:
         return None
     print(oponente)
-    
-
-
 
 def iniciarSesion(nick,password) :
     inicio= False

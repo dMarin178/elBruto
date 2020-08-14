@@ -69,40 +69,48 @@ def windowLucha(nick):
     ventanaLucha.title("Batalla")
     ventanaLucha.geometry("220x150")
     ventanaLucha.configure(background = 'black')
+    otraLucha = True
+    def seguirLuchando():
+        otraLucha = True
 
     if(getOponente(nick)==None):
         pop_up_msg("No hay oponentes de tu rango de nivel")
     else:
-        oponente=getOponente(nick)
-        avatar=getAvatar(nick)
-        victoria=luchar(avatar,oponente)
+        while(otraLucha == True):
+            oponente=getOponente(nick)
+            avatar=getAvatar(nick)
+            victoria=luchar(avatar,oponente)
 
-        labelBatalla=tk.Label(ventanaLucha,text=" Se enfrento "+nick+" lvl "+str(getNivel(avatar[4]))+" contra "+oponente[0]+" lvl "+str(getNivel(oponente[4])),bg="black",fg="white" )
-        labelBatalla.pack(pady=5)
-        if(victoria):
-            labelResultado=tk.Label(ventanaLucha,text=" VICTORIA! , ganas: 100 exp",bg="black",fg="white")
-            labelResultado.pack(pady=10)
-            subirExperiencia(nick,100)
-        else:
-            labelResultado=tk.Label(ventanaLucha,text=" DERROTA , ganas: 20 exp",bg="black",fg="white")
-            labelResultado.pack(pady=10)
-            subirExperiencia(nick,20)
-        #stats despues de la pelea
-        avatar2=getAvatar(nick)
-        if(getNivel(avatar[4])<getNivel(avatar2[4])):
-            #si es 1: sube atck , si es 2: sube velocidad , si es 3: sube vida
-            sube=random.randint(1,3)
-            if(sube==1):
-                subirStats(nick,"ataque")
-            elif sube==2:
-                subirStats(nick,"velocidad")
+            labelBatalla=tk.Label(ventanaLucha,text=" Se enfrento "+nick+" lvl "+str(getNivel(avatar[4]))+" contra "+oponente[0]+" lvl "+str(getNivel(oponente[4])),bg="black",fg="white" )
+            labelBatalla.pack(pady=5)
+            btnSeguirLuchando = tk.Button(ventanaLucha,text = "Seguir luchando", command = seguirLuchando )
+            if(victoria):
+                labelResultado=tk.Label(ventanaLucha,text=" VICTORIA! , ganas: 100 exp",bg="black",fg="white")
+                labelResultado.pack(pady=10)
+                subirExperiencia(nick,100)
             else:
-                subirStats(nick,"vida")
-            labelSubirLvl=tk.Label(ventanaLucha,text=" Subiste de nivel ",bg="black",fg="white" )
-            labelSubirLvl.pack()
+                labelResultado=tk.Label(ventanaLucha,text=" DERROTA , ganas: 20 exp",bg="black",fg="white")
+                labelResultado.pack(pady=10)
+                subirExperiencia(nick,20)
+            #stats despues de la pelea
+            avatar2=getAvatar(nick)
+            if(getNivel(avatar[4])<getNivel(avatar2[4])):
+                #si es 1: sube atck , si es 2: sube velocidad , si es 3: sube vida
+                sube=random.randint(1,3)
+                if(sube==1):
+                    subirStats(nick,"ataque")
+                elif sube==2:
+                    subirStats(nick,"velocidad")
+                else:
+                    subirStats(nick,"vida")
+                labelSubirLvl=tk.Label(ventanaLucha,text=" Subiste de nivel ",bg="black",fg="white" )
+                labelSubirLvl.pack()
+            btnSeguirLuchando = tk.Button(ventanaLucha,text = "Seguir luchando", command = seguirLuchando )
+            btnSeguirLuchando.pack(pady=10)
+            btnSalir = tk.Button(ventanaLucha,text = "Salir", command = ventanaLucha.destroy )
+            btnSalir.pack(pady=10)
     
-    exitButton=tk.Button(ventanaLucha,text="OK",command=ventanaLucha.destroy)
-    exitButton.pack(pady=10)
+    
 
     
 
