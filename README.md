@@ -1,2 +1,7 @@
-# elBruto
-Juego básico de el Bruto hecho en python, consiste en la creación de un personaje donde se podrá enfrentar a otros jugadores mediante batallas por turnos.
+# Taller3BD
+Taller de base de datos, pequeña creacion del juego el Bruto
+
+Para conectar a la base de datos en "conexion.py" estan los parametros
+
+Ejecutar programa desde terminal en el directorio "python main.py"
+
