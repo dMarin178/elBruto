@@ -13,7 +13,7 @@ def getAvatar(nick):
     for avatar in cur :
         if(avatar[0]==nick):
             found = True
-            atributes = [avatar[0],avatar[1],avatar[2],avatar[3],avatar[4]]
+            atributes = [avatar[0],avatar[1],avatar[2],avatar[3],avatar[4],avatar[5]]
             return atributes     
     if(found==False):
         print("No se encontro al avatar")
@@ -154,8 +154,8 @@ def generarAvatar(nick):
     conn = conectar()
     cur =conn.cursor()
     cur.execute("""
-        INSERT INTO avatar (nick, ataque, velocidad, vida,ptosexp)
-        VALUES (%s,%s,%s,%s,%s);""",(listaDatos[0],listaDatos[1],listaDatos[2],listaDatos[3],listaDatos[4]) )
+        INSERT INTO avatar (nick, ataque, velocidad, vida,ptosexp,nivel)
+        VALUES (%s,%s,%s,%s,%s,1);""",(listaDatos[0],listaDatos[1],listaDatos[2],listaDatos[3],listaDatos[4]) )
     cur.close()
     conn.commit()
     conn.close()

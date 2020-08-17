@@ -39,7 +39,7 @@ def conectar():
         # Lectura de los parámetros de conexion
         #params = config()
         # Conexion al servidor ee PostgreSQL
-        conexion = psycopg2.connect(database="Gutierrez_Marin",user="postgres",password="postgres",host="localhost")
+        conexion = psycopg2.connect(database="taller2",user="postgres",password="postgres",host="localhost")
         return conexion
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)

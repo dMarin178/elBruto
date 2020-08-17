@@ -14,6 +14,10 @@ from funciones import getNivel
 from funciones import nextLvl
 from controller import gastarPelea
 from controller import getIntentos
+from bloques_Procedimientos import actualizar_nivel
+from bloques_Procedimientos import isBanned
+from bloques_Procedimientos import porc_toxicos
+from bloques_Procedimientos import top3
 
 
 import random
@@ -58,62 +62,50 @@ def menuJugador(nick):
 
 def puedeLuchar(nick):
     if(getIntentos(nick)>0):
-        gastarPelea(nick)
-        windowLucha(nick)
+        oponente = getOponente(nick)
+        if(oponente!=None):
+            gastarPelea(nick)
+            windowLucha(nick,oponente)
+        else: pop_up_msg("No hay oponente que cumpla los requisitos")   
     else:
-        pop_up_msg("Gastaste todas las luchas del dia, vuelve mañana. ")
+        pop_up_msg("Gastaste todas las luchas del dia, vuelve mañana.")
 
 
-def windowLucha(nick):
+def windowLucha(nick,oponente):
     ventanaLucha = tk.Tk()
     ventanaLucha.title("Batalla")
     ventanaLucha.geometry("220x150")
     ventanaLucha.configure(background = 'black')
-    otraLucha = True
-    def seguirLuchando():
-        otraLucha = True
 
-    if(getOponente(nick)==None):
-        pop_up_msg("No hay oponentes de tu rango de nivel")
+    avatar=getAvatar(nick)
+    nivel_actual = avatar[5]
+    victoria=luchar(avatar,oponente)
+    labelBatalla=tk.Label(ventanaLucha,text=" Se enfrento "+nick+" lvl "+str(nivel_actual)+" contra "+oponente[0]+" lvl "+str(getNivel(oponente[4])),bg="black",fg="white" )
+    labelBatalla.pack(pady=5)
+    if(victoria):
+        labelResultado=tk.Label(ventanaLucha,text=" VICTORIA! , ganas: 100 exp",bg="black",fg="white")
+        labelResultado.pack(pady=10)
+        subirExperiencia(nick,100)
+        actualizar_nivel(nick)
     else:
-        while(otraLucha == True):
-            oponente=getOponente(nick)
-            avatar=getAvatar(nick)
-            victoria=luchar(avatar,oponente)
-
-            labelBatalla=tk.Label(ventanaLucha,text=" Se enfrento "+nick+" lvl "+str(getNivel(avatar[4]))+" contra "+oponente[0]+" lvl "+str(getNivel(oponente[4])),bg="black",fg="white" )
-            labelBatalla.pack(pady=5)
-            btnSeguirLuchando = tk.Button(ventanaLucha,text = "Seguir luchando", command = seguirLuchando )
-            if(victoria):
-                labelResultado=tk.Label(ventanaLucha,text=" VICTORIA! , ganas: 100 exp",bg="black",fg="white")
-                labelResultado.pack(pady=10)
-                subirExperiencia(nick,100)
-            else:
-                labelResultado=tk.Label(ventanaLucha,text=" DERROTA , ganas: 20 exp",bg="black",fg="white")
-                labelResultado.pack(pady=10)
-                subirExperiencia(nick,20)
-            #stats despues de la pelea
-            avatar2=getAvatar(nick)
-            if(getNivel(avatar[4])<getNivel(avatar2[4])):
-                #si es 1: sube atck , si es 2: sube velocidad , si es 3: sube vida
-                sube=random.randint(1,3)
-                if(sube==1):
-                    subirStats(nick,"ataque")
-                elif sube==2:
-                    subirStats(nick,"velocidad")
-                else:
-                    subirStats(nick,"vida")
-                labelSubirLvl=tk.Label(ventanaLucha,text=" Subiste de nivel ",bg="black",fg="white" )
-                labelSubirLvl.pack()
-            btnSeguirLuchando = tk.Button(ventanaLucha,text = "Seguir luchando", command = seguirLuchando )
-            btnSeguirLuchando.pack(pady=10)
-            btnSalir = tk.Button(ventanaLucha,text = "Salir", command = ventanaLucha.destroy )
-            btnSalir.pack(pady=10)
-    
-    
-
-    
-
+        labelResultado=tk.Label(ventanaLucha,text=" DERROTA , ganas: 20 exp",bg="black",fg="white")
+        labelResultado.pack(pady=10)
+        subirExperiencia(nick,20)
+        #stats despues de la pelea
+        actualizar_nivel(nick)
+    if(nivel_actual < getNivel(avatar[4])):
+        #si es 1: sube atck , si es 2: sube velocidad , si es 3: sube vida
+        sube=random.randint(1,3)
+        if(sube==1):
+            subirStats(nick,"ataque")
+        elif sube==2:
+            subirStats(nick,"velocidad")
+        else:
+            subirStats(nick,"vida")
+        labelSubirLvl=tk.Label(ventanaLucha,text=" Subiste de nivel ",bg="black",fg="white" )
+        labelSubirLvl.pack()
+    btnSalir = tk.Button(ventanaLucha,text = "Salir", command = ventanaLucha.destroy )
+    btnSalir.pack(pady=10)
 
 
 #Funcion de pelea, si el jugador gana, devuelve True , si no , devuelve False
@@ -195,7 +187,7 @@ def reportPlayer():
 def menuAdmin(nick):
     sesionAdmin = tk.Tk()
     sesionAdmin.title("Administrador "+nick)
-    sesionAdmin.geometry("400x400")
+    sesionAdmin.geometry("400x600")
     #titulo del menu
     sesionAdmin.configure(background = 'black')
 
@@ -208,8 +200,22 @@ def menuAdmin(nick):
     reportados = getReportados()
     for jugador in reportados:
         if(jugador[1] != 0):
+            if(isBanned(jugador[0])==True):
+                label_toxic = tk.Label(sesionAdmin, text = "JUGADOR TOXICO",bg='black' ,fg='white')
+                label_toxic.pack()
             labelJugador = tk.Label(sesionAdmin,text= jugador[0]+" - Cantidad de reportes : "+str(jugador[1]), bg='black' ,fg='white')
-            labelJugador.pack(pady=5)
+            labelJugador.pack(pady=2)
+            separador = tk.Label(sesionAdmin,text="-------------------------------",bg='black' ,fg='white')
+            separador.pack()
+    toxicos = tk.Label(sesionAdmin,text="Porcentaje de jugadores toxicos: "+str(round(porc_toxicos(),2))+"%",bg='black' ,fg='white')
+    toxicos.pack()       
+
+    topTitle= tk.Label(sesionAdmin,text="TOP 3 JUGADORES ",bg='black' ,fg='white')
+    topTitle.pack(pady=10)
+    top_lvl=top3()
+    for i in range(3) :
+        top= tk.Label(sesionAdmin,text= str(i+1)+"-"+str(top_lvl[i][0])+" , nivel :"+str(top_lvl[i][1]),bg='black' ,fg='white')
+        top.pack()
 
     reportarJugador = tk.Button(sesionAdmin ,text="Bannear un jugador ",command=banWindow)
     reportarJugador.pack(pady=10)
