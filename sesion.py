@@ -18,6 +18,8 @@ from bloques_Procedimientos import actualizar_nivel
 from bloques_Procedimientos import isBanned
 from bloques_Procedimientos import porc_toxicos
 from bloques_Procedimientos import top3
+from bloques_Procedimientos import jugador_A_Admin
+from bloques_Procedimientos import check_toxic
 
 
 import random
@@ -30,6 +32,7 @@ def menuJugador(nick):
     sesionJugador.configure(background = 'black')
 
     avatar= getAvatar(nick)
+    check_toxic()
 
     titulo = tk.Label(sesionJugador, text = nick ,bg='black',fg='white', font= tkFont.Font(size=20))
     titulo.pack(pady=20)
@@ -194,6 +197,8 @@ def menuAdmin(nick):
     titulo = tk.Label(sesionAdmin, text = "Bienvenido "+nick ,bg='black',fg='white', font= tkFont.Font(size=20))
     titulo.pack(pady=20)
 
+    check_toxic()
+
     labelReportPlayers = tk.Label(sesionAdmin ,text="Lista de jugadores : ",bg='black',fg='white')
     labelReportPlayers.pack(pady=5)
 
@@ -219,6 +224,9 @@ def menuAdmin(nick):
 
     reportarJugador = tk.Button(sesionAdmin ,text="Bannear un jugador ",command=banWindow)
     reportarJugador.pack(pady=10)
+
+    assenderJugador = tk.Button(sesionAdmin, text = "Cambiar jugador a administrador", command = asender_jugador_window )
+    assenderJugador.pack(pady=10)
 
     cerrarSesion= tk.Button(sesionAdmin,text="Cerrar sesion",command=sesionAdmin.destroy)
     cerrarSesion.pack(pady=10)
@@ -246,6 +254,26 @@ def banWindow():
     exitButton = tk.Button(banWindow,text="Salir", command=banWindow.destroy)
     exitButton.pack(pady=10)
 
+def asender_jugador_window():
+    asender_jugador_window = tk.Tk()
+    asender_jugador_window.title("Jugador a Admin")
+    asender_jugador_window.geometry("300x150")
+    asender_jugador_window.configure(background = "black")
+
+    titulo = tk.Label(asender_jugador_window,text="Nick del jugador que quiere cambiar a administrador",bg='black',fg='white')
+    titulo.pack(pady=5)
+
+    jugadorEntry = tk.Entry(asender_jugador_window)
+    jugadorEntry.pack(pady=5)
+
+    def jugadorAdmin():
+        jugador_A_Admin(jugadorEntry.get())
+        pop_up_msg("Jugador "+jugadorEntry.get()+ " ahora es administador")
+
+    confirm_button = tk.Button(asender_jugador_window,text="Confirmar",command=jugadorAdmin )
+    confirm_button.pack(pady=5)
     
+    exit_button = tk.Button(asender_jugador_window,text="Salir",command=asender_jugador_window.destroy )
+    exit_button.pack(pady=5)
         
 

@@ -48,4 +48,22 @@ def top3():
 
     return top
 
-    
+def jugador_A_Admin(userName):
+    conn=conectar()
+    cur = conn.cursor()
+    cur.callproc('tranformarenadmin',[userName,])
+
+    cur.close()
+    conn.commit()
+    conn.close()
+
+def check_toxic():
+    conn = conectar()
+    cur = conn.cursor()
+    cur.execute('SELECT checktoxic()')
+
+    cur.close()
+    conn.close()
+
+
+
